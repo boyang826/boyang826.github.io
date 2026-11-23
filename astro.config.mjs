@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  // Replace with the real domain once it is bought.
-  site: 'https://example.com',
+  // Switch to the custom domain (and add public/CNAME) once it is bought.
+  site: 'https://boyang826.github.io',
   devToolbar: { enabled: false },
   i18n: {
     defaultLocale: 'en',
