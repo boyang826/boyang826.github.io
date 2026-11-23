@@ -29,6 +29,7 @@ const a = copy.about;
             </a>
           ))
         }
+        {site.linkedin && <a class="btn btn-ghost" href={site.linkedin} target="_blank" rel="noopener">{copy.contact.linkedin}</a>}
       </div>
     </div>
     <Image class="portrait" src={portrait} alt={copy.name} widths={[500, 900, 1200]} sizes="(max-width: 860px) 100vw, 440px" loading="eager" />

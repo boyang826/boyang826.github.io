@@ -58,6 +58,7 @@ const ui = {
       body: 'I’m looking for Summer 2027 internships in hardware-focused embedded engineering and robotics, or in product management. The fastest way to reach me is email.',
       email: 'Email me',
       resumes: { embedded: 'Résumé · Embedded', product: 'Résumé · Product' },
+      linkedin: 'LinkedIn',
     },
     project: {
       back: 'All work',
@@ -162,6 +163,7 @@ const ui = {
       body: '我正在寻找 2027 年暑期偏硬件的嵌入式与机器人方向实习，或产品经理实习。联系我最快的方式是邮件。',
       email: '发邮件给我',
       resumes: { embedded: '简历 · 嵌入式', product: '简历 · 产品经理' },
+      linkedin: '领英',
     },
     project: {
       back: '全部项目',

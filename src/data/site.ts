@@ -2,7 +2,7 @@
 export const site = {
   email: 'yang88@engineering.upenn.edu',
   github: '',
-  linkedin: '',
+  linkedin: 'https://www.linkedin.com/in/bo-yang-731814432/',
 };
 
 // Phone-free résumé PDFs served from public/resume/.
