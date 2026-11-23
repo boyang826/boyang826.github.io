@@ -25,7 +25,7 @@ const ui = {
     hero: {
       eyebrow: 'Electrical Engineering · University of Pennsylvania',
       title: 'Engineer.\nBuilder.\nRider.',
-      body: 'Embedded systems, autonomous robots, and the products around them. I’m an M.S.E. student at Penn looking for Summer 2027 internships in embedded engineering and product management. Off the bench, I’m usually somewhere on a long road on my bike.',
+      body: 'Embedded hardware, autonomous robots, and the products around them. I’m an M.S.E. student at Penn looking for Summer 2027 internships in hardware-focused embedded engineering and robotics, or in product management. Off the bench, I’m usually somewhere on a long road on my bike.',
       ctaWork: 'See selected work',
       ctaContact: 'Say hello',
     },
@@ -54,7 +54,7 @@ const ui = {
     },
     contact: {
       title: 'Let’s talk',
-      body: 'I’m looking for Summer 2027 internships in embedded systems and product management. The fastest way to reach me is email.',
+      body: 'I’m looking for Summer 2027 internships in hardware-focused embedded engineering and robotics, or in product management. The fastest way to reach me is email.',
       email: 'Email me',
       resumes: { embedded: 'Résumé · Embedded', product: 'Résumé · Product' },
     },
@@ -92,7 +92,7 @@ const ui = {
       title: 'About',
       bio: [
         'I’m Bo Yang, an electrical engineering master’s student at the University of Pennsylvania (expected May 2028). Before Penn I completed a dual-degree B.Eng. at the University of Electronic Science and Technology of China (UESTC) and the University of Glasgow, graduating with First Class Honours.',
-        'I like work that sits between hardware and people: making a sensor, a drone or a lab tool actually usable by whoever depends on it. That’s why I’m exploring both embedded engineering and product management for Summer 2027.',
+        'I like work that sits between hardware and people: making a sensor, a drone or a lab tool actually usable by whoever depends on it. That’s why, for Summer 2027, I’m looking at hardware-focused embedded and robotics roles as well as product management.',
       ],
       education: 'Education',
       edu: [
@@ -129,7 +129,7 @@ const ui = {
     hero: {
       eyebrow: '宾夕法尼亚大学 · 电气工程',
       title: '工程师，\n也是骑行者。',
-      body: '关注嵌入式系统、自主机器人，以及围绕它们的产品。我目前在宾夕法尼亚大学读电气工程硕士，正在寻找 2027 年暑期的嵌入式开发与产品经理实习。离开工作台的时候，我多半在某条长路上骑车。',
+      body: '关注嵌入式硬件、自主机器人，以及围绕它们的产品。我目前在宾夕法尼亚大学读电气工程硕士，正在寻找 2027 年暑期偏硬件的嵌入式与机器人方向实习，或产品经理实习。离开工作台的时候，我多半在某条长路上骑车。',
       ctaWork: '看看我的项目',
       ctaContact: '联系我',
     },
@@ -158,7 +158,7 @@ const ui = {
     },
     contact: {
       title: '聊聊吧',
-      body: '我正在寻找 2027 年暑期的嵌入式开发与产品经理实习。联系我最快的方式是邮件。',
+      body: '我正在寻找 2027 年暑期偏硬件的嵌入式与机器人方向实习，或产品经理实习。联系我最快的方式是邮件。',
       email: '发邮件给我',
       resumes: { embedded: '简历 · 嵌入式', product: '简历 · 产品经理' },
     },
@@ -196,7 +196,7 @@ const ui = {
       title: '关于我',
       bio: [
         '我是杨博，宾夕法尼亚大学电气工程硕士在读，预计 2028 年 5 月毕业。本科是电子科技大学与格拉斯哥大学的双学位项目，以一等荣誉学位毕业。',
-        '我喜欢介于硬件和人之间的工作：让一个传感器、一架无人机或者一个实验工具，真正被依赖它的人用起来。所以 2027 年暑期，我同时在看嵌入式开发和产品经理两个方向。',
+        '我喜欢介于硬件和人之间的工作：让一个传感器、一架无人机或者一个实验工具，真正被依赖它的人用起来。所以 2027 年暑期，我同时在看偏硬件的嵌入式与机器人方向，以及产品经理方向。',
       ],
       education: '教育背景',
       edu: [
