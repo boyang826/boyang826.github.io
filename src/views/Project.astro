@@ -1,0 +1,279 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CoilArt from '../components/CoilArt.astro';
+import { localize, t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'projects'>;
+}
+
+const { lang, entry } = Astro.props;
+const copy = t(lang);
+const { title, summary, role, org, advisor, period, cover, coverAlt, facts, gallery, tags } = entry.data;
+const { Content } = await render(entry);
+
+const siblings = (await getCollection('projects', ({ id }) => id.startsWith(`${lang}/`))).sort((a, b) => a.data.order - b.data.order);
+const next = siblings[(siblings.findIndex((p) => p.id === entry.id) + 1) % siblings.length];
+const slugOf = (id: string) => id.split('/')[1];
+
+const meta = [
+  { label: copy.project.role, value: role },
+  { label: copy.project.org, value: org },
+  ...(advisor ? [{ label: copy.project.advisor, value: advisor }] : []),
+  { label: copy.project.period, value: period },
+];
+---
+
+<Base lang={lang} title={title} description={summary}>
+  <article>
+    <header class="container head">
+      <a class="back" href={localize('/#work', lang)}><span aria-hidden="true">←</span> {copy.project.back}</a>
+      <h1>{title}</h1>
+      <p class="summary">{summary}</p>
+      <dl class="meta">
+        {
+          meta.map((m) => (
+            <div>
+              <dt>{m.label}</dt>
+              <dd>{m.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </header>
+
+    <div class="container">
+      <figure class="cover">
+        {cover ? <Image src={cover} alt={coverAlt ?? title} widths={[800, 1300, 1900]} sizes="(max-width: 1180px) 100vw, 1100px" loading="eager" /> : <CoilArt />}
+      </figure>
+    </div>
+
+    {
+      facts.length > 0 && (
+        <div class="container">
+          <ul class="facts">
+            {facts.map((f) => (
+              <li>
+                <span class="fv">{f.value}</span>
+                <span class="fl">{f.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <div class="container body">
+      <div class="prose">
+        <Content />
+      </div>
+      <aside class="tags" aria-label="Tools">
+        {tags.map((tag) => <span>{tag}</span>)}
+      </aside>
+    </div>
+
+    {
+      gallery.length > 0 && (
+        <section class="container gallery-wrap">
+          <h2 class="gallery-title rule">{copy.project.gallery}</h2>
+          <div class="gallery">
+            {gallery.map((g) => (
+              <figure>
+                <Image src={g.src} alt={g.alt} widths={[500, 900]} sizes="(max-width: 760px) 100vw, 380px" loading="lazy" />
+                <figcaption>{g.alt}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <nav class="container next" aria-label={copy.project.next}>
+      <p class="eyebrow">{copy.project.next}</p>
+      <a href={localize(`/projects/${slugOf(next.id)}/`, lang)}>{next.data.title} <span aria-hidden="true">→</span></a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .head {
+    padding-top: clamp(40px, 7vw, 84px);
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+
+  .back {
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--red);
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    max-width: 18ch;
+  }
+
+  .summary {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 40px;
+    margin: 18px 0 0;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    width: 100%;
+  }
+
+  .meta dt {
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .meta dd {
+    margin: 4px 0 0;
+    font-size: 0.98rem;
+  }
+
+  .cover {
+    margin: clamp(32px, 5vw, 56px) 0 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--paper-deep);
+  }
+
+  .cover :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    list-style: none;
+    margin: 36px 0 0;
+    padding: 0 0 32px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .facts li {
+    display: grid;
+    gap: 4px;
+    border-top: 2px solid var(--red);
+    padding-top: 14px;
+  }
+
+  .fv {
+    font-family: var(--font-serif);
+    color: var(--heading);
+    font-size: 1.7rem;
+    line-height: 1.1;
+  }
+
+  .fl {
+    font-size: 0.84rem;
+    color: var(--muted);
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 48px;
+    padding-block: 24px 24px;
+  }
+
+  .tags {
+    align-self: start;
+    position: sticky;
+    top: 96px;
+    margin-top: 2.6em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tags span {
+    font-size: 0.78rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 860px) {
+    .body {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .tags {
+      position: static;
+      margin-top: 0;
+      order: -1;
+      padding-top: 24px;
+    }
+  }
+
+  .gallery-wrap {
+    padding-block: 48px 24px;
+  }
+
+  .gallery-title {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+  }
+
+  .gallery {
+    columns: 3 280px;
+    column-gap: 20px;
+  }
+
+  .gallery figure {
+    margin: 0 0 20px;
+    break-inside: avoid;
+  }
+
+  .gallery :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  .gallery figcaption {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .next {
+    padding-block: 56px 88px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .next a {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    text-decoration: none;
+  }
+
+  .next a:hover {
+    color: var(--red);
+  }
+</style>

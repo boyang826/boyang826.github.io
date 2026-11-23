@@ -1,0 +1,67 @@
+---
+// Abstract illustration for the stent-antenna project, which has no photos of its own:
+// a helical stent coil inside a vessel, with field lines from an external coil.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const turns = 9;
+const coil = Array.from({ length: turns }, (_, i) => {
+  const x = 150 + i * 30;
+  return `M${x} 170 C ${x + 10} 120, ${x + 20} 120, ${x + 30} 170 C ${x + 40} 220, ${x + 50} 220, ${x + 60} 170`;
+});
+const fields = [0, 1, 2, 3].map((i) => {
+  const r = 60 + i * 34;
+  return `M ${300 - r} 40 A ${r} ${r * 0.55} 0 0 0 ${300 + r} 40`;
+});
+---
+
+<svg class:list={['coil', className]} viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of a helical stent coil powered by an external coil">
+  <rect width="600" height="300" class="bg" />
+  <g class="field">
+    {fields.map((d) => <path d={d} />)}
+  </g>
+  <rect x="210" y="22" width="180" height="16" rx="8" class="tx" />
+  <rect x="110" y="128" width="380" height="84" rx="42" class="vessel" />
+  <g class="wire">
+    {coil.map((d) => <path d={d} />)}
+  </g>
+</svg>
+
+<style>
+  .coil {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bg {
+    fill: var(--accent-soft);
+  }
+
+  .field path {
+    fill: none;
+    stroke: var(--sky);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 6;
+    opacity: 0.8;
+  }
+
+  .tx {
+    fill: var(--heading);
+  }
+
+  .vessel {
+    fill: color-mix(in srgb, var(--paper) 70%, transparent);
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+
+  .wire path {
+    fill: none;
+    stroke: var(--heading);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+</style>

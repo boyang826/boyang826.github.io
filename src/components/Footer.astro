@@ -1,0 +1,75 @@
+---
+import RouteLine from './RouteLine.astro';
+import { site } from '../data/site';
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer navy">
+  <div class="container inner">
+    <div class="mark">
+      <RouteLine class="mini" strokeWidth={1.5} draw={false} markers={false} />
+    </div>
+    <div class="text">
+      <p class="note">{copy.footer.note}</p>
+      <p class="links">
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        {site.github && <a href={site.github}>GitHub</a>}
+        {site.linkedin && <a href={site.linkedin}>LinkedIn</a>}
+      </p>
+      <p class="copy">© {year} {copy.name}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--navy-deep);
+    padding-block: 40px 48px;
+    font-size: 0.88rem;
+    color: var(--on-navy-soft);
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .mark {
+    width: 96px;
+    flex: none;
+    color: var(--sky);
+  }
+
+  .mark :global(.mini) {
+    --route: var(--sky);
+  }
+
+  .text {
+    display: grid;
+    gap: 4px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .links a {
+    color: var(--on-navy);
+    text-decoration: none;
+  }
+
+  .links a:hover {
+    color: var(--sky);
+  }
+</style>

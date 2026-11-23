@@ -1,0 +1,324 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import RouteLine from '../components/RouteLine.astro';
+import { site, resumes } from '../data/site';
+import { localize, t, type Lang } from '../i18n/ui';
+import hero from '../assets/images/hero/sunset-wide.jpg';
+import groupRide from '../assets/images/cycling/group-ride.jpg';
+import coastRoad from '../assets/images/cycling/bikepacking-coast-road.jpg';
+import twoRiders from '../assets/images/cycling/two-riders-sunset.jpg';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+const projects = (await getCollection('projects', ({ id }) => id.startsWith(`${lang}/`))).sort((a, b) => a.data.order - b.data.order);
+const slugOf = (id: string) => id.split('/')[1];
+---
+
+<Base lang={lang}>
+  <section class="hero navy">
+    <div class="container hero-copy">
+      <div class="hero-title">
+        <p class="eyebrow">{copy.hero.eyebrow}</p>
+        <h1>{copy.hero.title.split('\n').map((line, i) => (i ? [<br />, line] : line))}</h1>
+      </div>
+      <div class="hero-side">
+        <p class="lede">{copy.hero.body}</p>
+        <div class="actions">
+          <a class="btn btn-solid" href="#work">{copy.hero.ctaWork}</a>
+          <a class="btn btn-ghost" href="#contact">{copy.hero.ctaContact}</a>
+        </div>
+      </div>
+    </div>
+    <figure class="hero-photo">
+      <Image src={hero} alt={lang === 'en' ? 'Me and my bike at sunset on a coastal road in Hainan' : '海南海边公路上的日落，我和我的车'} widths={[900, 1400, 2000, 2600]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </figure>
+  </section>
+
+  <section class="stats container" aria-label="Highlights">
+    {
+      copy.stats.map((s) => (
+        <div class="stat">
+          <p class="value">{s.value}</p>
+          <p class="label">{s.label}</p>
+        </div>
+      ))
+    }
+  </section>
+
+  <section id="work" class="section container">
+    <div class="section-head">
+      <h2 class="rule">{copy.work.title}</h2>
+      <p>{copy.work.intro}</p>
+    </div>
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} href={localize(`/projects/${slugOf(p.id)}/`, lang)} readLabel={copy.work.read} />)}
+    </div>
+  </section>
+
+  <section class="route-band navy" aria-label={copy.route.caption}>
+    <div class="container route-inner">
+      <RouteLine />
+      <p class="route-caption">{copy.route.caption}</p>
+    </div>
+  </section>
+
+  <section class="section container off-bench">
+    <div class="ob-text">
+      <p class="eyebrow">{copy.nav.cycling}</p>
+      <h2 class="rule">{copy.offBench.title}</h2>
+      {copy.offBench.body.map((p) => <p>{p}</p>)}
+      <p class="race">{copy.offBench.race}</p>
+      <a class="link-arrow" href={localize('/cycling/', lang)}>{copy.offBench.more} <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="ob-photos">
+      <Image class="p1" src={coastRoad} alt="Bikepacking rig on an empty coastal road" widths={[400, 700]} sizes="(max-width: 760px) 60vw, 300px" loading="lazy" />
+      <Image class="p2" src={groupRide} alt="Group selfie with the cycling club" widths={[500, 900]} sizes="(max-width: 760px) 80vw, 420px" loading="lazy" />
+      <Image class="p3" src={twoRiders} alt="Two riders heading into a hazy sunset" widths={[400, 700]} sizes="(max-width: 760px) 50vw, 260px" loading="lazy" />
+    </div>
+  </section>
+
+  <section id="contact" class="contact navy">
+    <div class="container contact-inner">
+      <h2 class="rule">{copy.contact.title}</h2>
+      <p>{copy.contact.body}</p>
+      <div class="actions">
+        <a class="btn btn-solid" href={`mailto:${site.email}`}>{copy.contact.email}</a>
+        {
+          resumes[lang].map((r) => (
+            <a class="btn btn-ghost" href={r.href} download={'download' in r ? r.download : ''}>
+              {copy.contact.resumes[r.key]}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero: headline on paper, then a cinematic crop of the sunset ride ---------- */
+  .hero-copy {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    align-items: end;
+    gap: 24px clamp(32px, 6vw, 96px);
+    padding-block: clamp(48px, 9vw, 112px) clamp(36px, 5vw, 64px);
+  }
+
+  .hero h1 {
+    margin-top: 18px;
+    font-size: clamp(2.6rem, 6vw, 5.2rem);
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1:lang(zh) {
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+
+  .lede {
+    max-width: 44ch;
+    color: var(--on-navy-soft);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  .hero-photo {
+    margin: 0;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    overflow: hidden;
+    background: var(--navy);
+  }
+
+  .hero-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 52%;
+  }
+
+  @media (max-width: 860px) {
+    .hero-copy {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-photo {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  /* ---------- Stats ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-block: 44px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stat {
+    border-top: 2px solid var(--red);
+    padding-top: 16px;
+  }
+
+  .value {
+    font-family: var(--font-serif);
+    color: var(--heading);
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    line-height: 1.1;
+  }
+
+  .label {
+    margin-top: 8px;
+    font-size: 0.86rem;
+    color: var(--muted);
+    max-width: 24ch;
+  }
+
+  @media (max-width: 760px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 20px;
+    }
+  }
+
+  /* ---------- Work grid ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(40px, 6vw, 72px) clamp(28px, 4vw, 56px);
+  }
+
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Route band ---------- */
+  .route-band {
+    --route: #ffffff;
+    --route-bg: var(--navy);
+    --route-end: var(--red-on-navy);
+    padding-block: clamp(40px, 7vw, 80px);
+  }
+
+  .route-inner {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+  }
+
+  .route-inner :global(.route) {
+    max-width: 640px;
+  }
+
+  .route-caption {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    color: var(--on-navy-soft);
+  }
+
+  /* ---------- Off the bench ---------- */
+  .off-bench {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+
+  .ob-text {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+
+  .ob-text h2 {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+  }
+
+  .ob-text p:not(.eyebrow) {
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .ob-text .race {
+    color: var(--heading);
+    border-left: 2px solid var(--red);
+    padding-left: 14px;
+  }
+
+  .ob-photos {
+    position: relative;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ob-photos :global(img) {
+    position: absolute;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: 0 18px 40px -24px rgba(1, 31, 91, 0.5);
+  }
+
+  .ob-photos :global(.p1) {
+    left: 0;
+    top: 4%;
+    width: 46%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .ob-photos :global(.p2) {
+    right: 0;
+    top: 0;
+    width: 58%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .ob-photos :global(.p3) {
+    right: 10%;
+    bottom: 0;
+    width: 42%;
+    aspect-ratio: 3 / 4;
+  }
+
+  @media (max-width: 860px) {
+    .off-bench {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Contact ---------- */
+  .contact {
+    padding-block: clamp(64px, 10vw, 110px);
+  }
+
+  .contact-inner {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+
+  .contact h2 {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+  }
+
+  .contact p {
+    max-width: 52ch;
+    color: var(--on-navy-soft);
+  }
+</style>

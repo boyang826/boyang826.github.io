@@ -1,0 +1,44 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { localize, unlocalize, t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+}
+
+const { lang, title, description } = Astro.props;
+const copy = t(lang);
+const pageTitle = title ? `${title} · ${copy.name}` : `${copy.name} — ${lang === 'en' ? 'Engineer & cyclist' : '工程师，也是骑行者'}`;
+const basePath = unlocalize(Astro.url.pathname);
+const canonical = new URL(localize(basePath, lang), Astro.site);
+---
+
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description ?? copy.meta.description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL(localize(basePath, 'en'), Astro.site)} />
+    <link rel="alternate" hreflang="zh-CN" href={new URL(localize(basePath, 'zh'), Astro.site)} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description ?? copy.meta.description} />
+    <meta name="theme-color" content="#011f5b" />
+  </head>
+  <body>
+    <Header lang={lang} />
+    <main>
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

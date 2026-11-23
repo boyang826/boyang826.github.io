@@ -1,0 +1,209 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { site, resumes } from '../data/site';
+import { t, type Lang } from '../i18n/ui';
+import portrait from '../assets/images/about/portrait.jpg';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+const a = copy.about;
+---
+
+<Base lang={lang} title={a.title}>
+  <section class="container intro">
+    <div class="text">
+      <p class="eyebrow">{copy.nav.about}</p>
+      <h1>{a.title}</h1>
+      {a.bio.map((p) => <p class="bio">{p}</p>)}
+      <div class="actions">
+        <a class="btn btn-solid" href={`mailto:${site.email}`}>{copy.contact.email}</a>
+        {
+          resumes[lang].map((r) => (
+            <a class="btn btn-ghost" href={r.href} download={'download' in r ? r.download : ''}>
+              {copy.contact.resumes[r.key]}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+    <Image class="portrait" src={portrait} alt={copy.name} widths={[500, 900, 1200]} sizes="(max-width: 860px) 100vw, 440px" loading="eager" />
+  </section>
+
+  <section class="container cols">
+    <div>
+      <h2 class="rule">{a.education}</h2>
+      <ol class="timeline">
+        {
+          a.edu.map((e) => (
+            <li>
+              <p class="period">{e.period}</p>
+              <p class="school">{e.school}</p>
+              <p class="detail">{e.detail}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <div>
+      <h2 class="rule">{a.skills}</h2>
+      {
+        a.skillGroups.map((g) => (
+          <div class="group">
+            <p class="group-name">{g.name}</p>
+            <ul class="chips">
+              {g.items.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+      <h2 class="honors-title rule">{a.honors}</h2>
+      <ul class="honors">
+        {a.honorList.map((h) => <li>{h}</li>)}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+    padding-top: clamp(40px, 7vw, 84px);
+  }
+
+  .text {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 5rem);
+  }
+
+  .bio {
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .intro :global(.portrait) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    padding-block: clamp(64px, 9vw, 110px);
+  }
+
+  h2 {
+    font-size: 1.7rem;
+    margin-bottom: 22px;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 22px;
+  }
+
+  .timeline li {
+    padding-left: 18px;
+    border-left: 2px solid var(--line);
+  }
+
+  .period {
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .school {
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .detail {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+
+  .group {
+    margin-bottom: 18px;
+  }
+
+  .group-name {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .chips li {
+    font-size: 0.86rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+
+  .honors-title {
+    margin-top: 40px;
+  }
+
+  .honors {
+    margin: 0;
+    padding-left: 1.1em;
+    color: var(--ink-soft);
+    display: grid;
+    gap: 8px;
+  }
+
+  .honors li::marker {
+    color: var(--red);
+  }
+
+  @media (max-width: 860px) {
+    .intro,
+    .cols {
+      grid-template-columns: 1fr;
+    }
+
+    .intro :global(.portrait) {
+      max-width: 420px;
+      order: -1;
+    }
+  }
+</style>

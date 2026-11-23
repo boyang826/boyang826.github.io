@@ -1,0 +1,237 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import RouteLine from '../components/RouteLine.astro';
+import { ride } from '../data/ride';
+import { t, type Lang } from '../i18n/ui';
+import race from '../assets/images/cycling/uci-hainan-race.jpg';
+import groupRide from '../assets/images/cycling/group-ride.jpg';
+import coastRoad from '../assets/images/cycling/bikepacking-coast-road.jpg';
+import bridge from '../assets/images/cycling/bridge-solo.jpg';
+import dusk from '../assets/images/cycling/bike-at-dusk.jpg';
+import beach from '../assets/images/cycling/beach-break.jpg';
+import buddies from '../assets/images/cycling/riding-buddies.jpg';
+import spray from '../assets/images/cycling/finish-spray.jpg';
+import twoRiders from '../assets/images/cycling/two-riders-sunset.jpg';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+const c = copy.cycling;
+const stats = [
+  { label: c.statLabels.distance, value: `${ride.distanceKm} km` },
+  { label: c.statLabels.avg, value: `${ride.avgSpeedKmh} km/h` },
+  { label: c.statLabels.moving, value: ride.movingTime },
+  { label: c.statLabels.climb, value: `${ride.elevationM} m` },
+  { label: c.statLabels.max, value: `${ride.maxSpeedKmh} km/h` },
+];
+const photos = [
+  { src: coastRoad, alt: lang === 'en' ? 'Bikepacking setup on a coastal road' : '海边公路上的驮包旅行' },
+  { src: dusk, alt: lang === 'en' ? 'The bike at dusk' : '黄昏时分的车' },
+  { src: buddies, alt: lang === 'en' ? 'With a riding buddy' : '和车友' },
+  { src: bridge, alt: lang === 'en' ? 'Solo on an empty bridge' : '一个人骑过空旷的大桥' },
+  { src: spray, alt: lang === 'en' ? 'Cooling off at the finish' : '终点降温' },
+  { src: beach, alt: lang === 'en' ? 'Beach stop' : '海边歇脚' },
+  { src: twoRiders, alt: lang === 'en' ? 'Riding into the haze' : '骑进薄雾里' },
+];
+---
+
+<Base lang={lang} title={c.title} description={c.lead}>
+  <header class="container head">
+    <p class="eyebrow">{copy.nav.cycling}</p>
+    <h1>{c.title}</h1>
+    <p class="lead">{c.lead}</p>
+  </header>
+
+  <section class="container race">
+    <div class="race-media">
+      <Image src={race} alt={c.raceTitle} widths={[700, 1200, 1800]} sizes="(max-width: 960px) 100vw, 640px" loading="eager" />
+    </div>
+    <div class="race-card">
+      <p class="eyebrow">{c.raceTitle}</p>
+      <h2>{c.raceApril}</h2>
+      <div class="race-route">
+        <RouteLine />
+      </div>
+      <dl class="race-stats">
+        {
+          stats.map((s) => (
+            <div>
+              <dt>{s.label}</dt>
+              <dd>{s.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="dec"><strong>{c.raceDec}</strong> · {c.raceDecNote}</p>
+    </div>
+  </section>
+
+  <section class="container club">
+    <div class="club-text">
+      <h2 class="rule">{c.clubTitle}</h2>
+      {c.clubBody.map((p) => <p>{p}</p>)}
+    </div>
+    <Image class="club-img" src={groupRide} alt={c.clubTitle} widths={[600, 1100]} sizes="(max-width: 860px) 100vw, 560px" loading="lazy" />
+  </section>
+
+  <section class="container gallery-wrap">
+    <h2 class="rule">{c.galleryTitle}</h2>
+    <div class="gallery">
+      {
+        photos.map((p) => (
+          <figure>
+            <Image src={p.src} alt={p.alt} widths={[500, 900]} sizes="(max-width: 760px) 100vw, 380px" loading="lazy" />
+            <figcaption>{p.alt}</figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-top: clamp(40px, 7vw, 84px);
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 5rem);
+  }
+
+  .lead {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: var(--ink-soft);
+    max-width: 50ch;
+  }
+
+  .race {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  .race-media :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  .race-card {
+    display: grid;
+    gap: 14px;
+  }
+
+  .race-card h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+  }
+
+  .race-route {
+    padding: 12px 0 4px;
+  }
+
+  .race-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .race-stats dt {
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .race-stats dd {
+    margin: 4px 0 0;
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    white-space: nowrap;
+    color: var(--heading);
+  }
+
+  .dec {
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .dec strong {
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .club {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+    padding-block: clamp(64px, 9vw, 110px);
+  }
+
+  .club-text {
+    display: grid;
+    gap: 16px;
+  }
+
+  .club-text h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+  }
+
+  .club-text p {
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .club :global(.club-img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  @media (max-width: 860px) {
+    .race,
+    .club {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .gallery-wrap {
+    padding-bottom: 88px;
+  }
+
+  .gallery-wrap h2 {
+    font-size: 1.8rem;
+    margin-bottom: 24px;
+  }
+
+  .gallery {
+    columns: 3 260px;
+    column-gap: 20px;
+  }
+
+  .gallery figure {
+    margin: 0 0 20px;
+    break-inside: avoid;
+  }
+
+  .gallery :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  .gallery figcaption {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,69 @@
+---
+import { ride } from '../data/ride';
+
+interface Props {
+  class?: string;
+  strokeWidth?: number;
+  draw?: boolean;
+  markers?: boolean;
+}
+
+const { class: className, strokeWidth = 3, draw = true, markers = true } = Astro.props;
+const pad = 12;
+const w = ride.width + pad * 2;
+const h = ride.height + pad * 2;
+const d = ride.points.map(([x, y], i) => `${i ? 'L' : 'M'}${(x + pad).toFixed(1)} ${(y + pad).toFixed(1)}`).join(' ');
+const [sx, sy] = ride.points[0];
+const [ex, ey] = ride.points[ride.points.length - 1];
+---
+
+<svg class:list={['route', className, { draw }]} viewBox={`0 0 ${w} ${h}`} role="img" aria-label="Route of a 76.9 km ride from Baoting to Lingshui, Hainan" preserveAspectRatio="xMidYMid meet">
+  <path d={d} fill="none" stroke="currentColor" stroke-width={strokeWidth} stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" pathLength="1" />
+  {
+    markers && (
+      <>
+        <circle cx={sx + pad} cy={sy + pad} r="9" class="start" />
+        <circle cx={ex + pad} cy={ey + pad} r="9" class="end" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .route {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--route, var(--red));
+    overflow: visible;
+  }
+
+  .start {
+    fill: var(--route-bg, var(--paper));
+    stroke: currentColor;
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .end {
+    fill: var(--route-end, var(--red));
+  }
+
+  .draw path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) 0.3s forwards;
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .draw path {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

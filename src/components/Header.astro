@@ -1,0 +1,114 @@
+---
+import { localize, unlocalize, t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const copy = t(lang);
+const basePath = unlocalize(Astro.url.pathname);
+const otherLang: Lang = lang === 'en' ? 'zh' : 'en';
+const links = [
+  { href: localize('/#work', lang), label: copy.nav.work },
+  { href: localize('/cycling/', lang), label: copy.nav.cycling, match: '/cycling' },
+  { href: localize('/about/', lang), label: copy.nav.about, match: '/about' },
+  { href: localize('/#contact', lang), label: copy.nav.contact },
+];
+---
+
+<header class="site-header navy">
+  <div class="container bar">
+    <a class="wordmark" href={localize('/', lang)}>{copy.name}</a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={l.match && basePath.startsWith(l.match) ? 'page' : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a class="lang" href={localize(basePath, otherLang)} hreflang={otherLang === 'zh' ? 'zh-CN' : 'en'} lang={otherLang === 'zh' ? 'zh-CN' : 'en'}>
+            {copy.langSwitch}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--navy) 96%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-top: 3px solid var(--red);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 64px;
+  }
+
+  .wordmark {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+
+  ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2.4vw, 28px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav a {
+    font-size: 0.92rem;
+    text-decoration: none;
+    color: var(--on-navy-soft);
+    transition: color 0.2s ease;
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: var(--on-navy);
+  }
+
+  nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--red-on-navy);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+
+  .lang {
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+  }
+
+  @media (max-width: 560px) {
+    .bar {
+      height: 56px;
+    }
+    nav li:nth-child(4) {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+import CoilArt from './CoilArt.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  href: string;
+  readLabel: string;
+}
+
+const { project, href, readLabel } = Astro.props;
+const { title, summary, role, year, cover, coverAlt, tags } = project.data;
+---
+
+<article class="card">
+  <a href={href} class="media" aria-label={title}>
+    {
+      cover ? (
+        <Image src={cover} alt={coverAlt ?? title} widths={[480, 760, 1100]} sizes="(max-width: 760px) 100vw, 560px" loading="lazy" />
+      ) : (
+        <CoilArt />
+      )
+    }
+  </a>
+  <div class="body">
+    <p class="meta">{year} · {role}</p>
+    <h3><a href={href}>{title}</a></h3>
+    <p class="summary">{summary}</p>
+    <ul class="tags">
+      {tags.slice(0, 4).map((tag) => <li>{tag}</li>)}
+    </ul>
+    <a class="link-arrow" href={href}>{readLabel} <span aria-hidden="true">→</span></a>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: grid;
+    align-content: start;
+    gap: 20px;
+  }
+
+  .media {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--paper-deep);
+  }
+
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .card:hover .media :global(img) {
+    transform: scale(1.035);
+  }
+
+  .body {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+  }
+
+  .meta {
+    font-size: 0.78rem;
+    font-weight: 550;
+    color: var(--red);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+  }
+
+  h3 a {
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--red);
+  }
+
+  .summary {
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 4px 0 6px;
+    padding: 0;
+  }
+
+  .tags li {
+    font-size: 0.76rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+</style>
