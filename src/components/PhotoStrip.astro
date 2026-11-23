@@ -1,0 +1,208 @@
+---
+// Hero photo strip: tall portrait slices of work and riding photos. On desktop the hovered
+// slice widens, the others dim, and the image drifts slightly with the cursor. On phones it
+// becomes a swipeable row. Each slice links to the project or cycling page it shows.
+import { Image } from 'astro:assets';
+import { localize, type Lang } from '../i18n/ui';
+import sunset from '../assets/images/hero/sunset-wide.jpg';
+import quad from '../assets/images/projects/autonomous-quadcopter/gate.jpg';
+import coast from '../assets/images/cycling/bikepacking-coast-road.jpg';
+import board from '../assets/images/projects/dopamine-sensing/cover.jpg';
+import club from '../assets/images/cycling/group-ride.jpg';
+import vr from '../assets/images/projects/vr-motion-capture/cover.jpg';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const en = lang === 'en';
+const slices = [
+  { src: sunset, focus: '38% 60%', href: '/cycling/', tag: en ? 'Rider' : '骑行', title: en ? 'Sunset ride, Hainan' : '海南，日落骑行' },
+  { src: quad, focus: '50% 42%', href: '/projects/autonomous-quadcopter/', tag: en ? 'Builder' : '工程', title: en ? 'Autonomous quadcopter · 1st of 18' : '自主四旋翼 · 18 队第一' },
+  { src: coast, focus: '50% 60%', href: '/cycling/', tag: en ? 'Rider' : '骑行', title: en ? 'Bikepacking the coast' : '沿海驮包骑行' },
+  { src: board, focus: '55% 50%', href: '/projects/dopamine-sensing/', tag: en ? 'Engineer' : '工程', title: en ? 'Wireless dopamine sensor' : '无线多巴胺检测' },
+  { src: club, focus: '62% 50%', href: '/cycling/', tag: en ? 'Rider' : '骑行', title: en ? 'The club I co-founded · 50+ riders' : '我参与创办的车社 · 50+ 人' },
+  { src: vr, focus: '55% 40%', href: '/projects/vr-motion-capture/', tag: en ? 'Builder' : '工程', title: en ? 'VR motion capture' : 'VR 动作捕捉' },
+];
+---
+
+<div class="strip" data-strip>
+  {
+    slices.map((s, i) => (
+      <a class="slice" href={localize(s.href, lang)} aria-label={s.title} style={`--focus: ${s.focus}`}>
+        <Image src={s.src} alt={s.title} widths={[400, 800, 1200]} sizes="(max-width: 760px) 75vw, 50vw" loading={i < 3 ? 'eager' : 'lazy'} />
+        <span class="caption">
+          <span class="tag">{s.tag}</span>
+          <span class="title">{s.title}</span>
+        </span>
+      </a>
+    ))
+  }
+</div>
+
+<script>
+  // Cursor drift: each image shifts a few pixels against the pointer for a light parallax.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hover = window.matchMedia('(hover: hover)').matches;
+  if (!reduce && hover) {
+    for (const strip of document.querySelectorAll<HTMLElement>('[data-strip]')) {
+      const slices = strip.querySelectorAll<HTMLElement>('.slice');
+      strip.addEventListener('pointermove', (e) => {
+        for (const s of slices) {
+          const r = s.getBoundingClientRect();
+          // Clamp to [-0.5, 0.5] so slices far from the cursor never drift past their edges.
+          const dx = Math.max(-0.5, Math.min(0.5, (e.clientX - r.left) / r.width - 0.5));
+          const dy = Math.max(-0.5, Math.min(0.5, (e.clientY - r.top) / r.height - 0.5));
+          s.style.setProperty('--dx', dx.toFixed(3));
+          s.style.setProperty('--dy', dy.toFixed(3));
+        }
+      });
+      strip.addEventListener('pointerleave', () => {
+        for (const s of slices) {
+          s.style.setProperty('--dx', '0');
+          s.style.setProperty('--dy', '0');
+        }
+      });
+    }
+  }
+</script>
+
+<style>
+  .strip {
+    display: flex;
+    gap: 4px;
+    height: min(76vh, 680px);
+    min-height: 420px;
+    background: var(--navy);
+  }
+
+  .slice {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    color: #fff;
+    text-decoration: none;
+    transition: flex-grow 0.7s cubic-bezier(0.22, 0.8, 0.24, 1);
+  }
+
+  .slice :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--focus, 50% 50%);
+    transform: translate3d(calc(var(--dx, 0) * -6%), calc(var(--dy, 0) * -6%), 0) scale(1.08);
+    transition: transform 0.9s cubic-bezier(0.22, 0.8, 0.24, 1), filter 0.6s ease;
+  }
+
+  /* Gradient so the caption stays readable on any photo */
+  .slice::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 16, 48, 0.78) 0%, rgba(0, 16, 48, 0.1) 42%, transparent 60%);
+    opacity: 0.55;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+
+  .caption {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    bottom: 22px;
+    z-index: 1;
+    display: grid;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.45s ease, transform 0.6s cubic-bezier(0.22, 0.8, 0.24, 1);
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red-on-navy);
+  }
+
+  .title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 1.9vw, 1.6rem);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  @media (hover: hover) and (min-width: 761px) {
+    .strip:hover .slice {
+      flex-grow: 0.7;
+    }
+
+    .strip .slice:hover,
+    .strip .slice:focus-visible {
+      flex-grow: 3.4;
+    }
+
+    .strip:hover .slice:not(:hover) :global(img) {
+      filter: saturate(0.6) brightness(0.72);
+    }
+
+    .slice:hover::after,
+    .slice:focus-visible::after {
+      opacity: 1;
+    }
+
+    .slice:hover .caption,
+    .slice:focus-visible .caption {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.15s;
+    }
+  }
+
+  /* Phones and touch screens: a swipeable row with captions always shown */
+  @media (max-width: 760px), (hover: none) {
+    .strip {
+      height: 62vh;
+      min-height: 380px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-inline: 16px;
+      gap: 10px;
+    }
+
+    .strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .slice {
+      flex: 0 0 74%;
+      scroll-snap-align: center;
+      border-radius: var(--radius);
+    }
+
+    .slice::after {
+      opacity: 1;
+    }
+
+    .caption {
+      opacity: 1;
+      transform: none;
+    }
+
+    .title {
+      white-space: normal;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slice,
+    .slice :global(img),
+    .caption {
+      transition: none;
+    }
+  }
+</style>
