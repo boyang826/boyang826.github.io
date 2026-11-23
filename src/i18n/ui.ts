@@ -29,11 +29,12 @@ const ui = {
       ctaWork: 'See selected work',
       ctaContact: 'Say hello',
     },
+    // FTP 225 W at 62 kg body weight -> 3.6 W/kg (weight itself is not shown on the site).
     stats: [
-      { value: '1st / 18', label: 'teams in an autonomous UAV challenge' },
-      { value: '6', label: 'people on the team I led' },
-      { value: '50+', label: 'riders in the cycling club I co-founded' },
-      { value: '38.9 km/h', label: 'average over 76.9 km at UCI Gran Fondo Hainan' },
+      { value: '20,000 km', label: 'ridden on my road bike so far' },
+      { value: '225 W', label: 'FTP (functional threshold power)' },
+      { value: '3.6 W/kg', label: 'power-to-weight at FTP' },
+      { value: '1st / 18', label: 'teams in an autonomous drone challenge' },
     ],
     work: {
       title: 'Selected work',
@@ -134,10 +135,10 @@ const ui = {
       ctaContact: '联系我',
     },
     stats: [
+      { value: '20,000 km', label: '累计骑行里程' },
+      { value: '225 W', label: '功能阈值功率（FTP）' },
+      { value: '3.6 W/kg', label: '功体比（FTP ÷ 体重）' },
       { value: '1st / 18', label: '自主无人机挑战赛排名' },
-      { value: '6', label: '我带领的团队人数' },
-      { value: '50+', label: '我参与创办的自行车社成员' },
-      { value: '38.9 km/h', label: 'UCI 格兰芬多海南站 76.9 km 均速' },
     ],
     work: {
       title: '项目',
